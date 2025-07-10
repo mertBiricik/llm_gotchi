@@ -21,6 +21,11 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
     exit 1
 fi
 
+# Commit all changes first
+echo "Committing all changes before release..."
+git add .
+git commit -m "chore: pre-release changes" || true
+
 # Check if there are uncommitted changes
 if ! git diff-index --quiet HEAD --; then
     echo "Error: You have uncommitted changes. Please commit or stash them first."
