@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:confetti/confetti.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../services/pet_service.dart';
 import '../widgets/pet_display.dart';
 import '../widgets/stats_grid.dart';
@@ -684,21 +685,17 @@ class _HomeScreenState extends State<HomeScreen>
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
           ),
           child: Container(
             constraints: const BoxConstraints(maxHeight: 600),
             padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white,
-                  Colors.purple.shade50,
-                ],
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.zero,
+              color: Color(0xFF1F1F1F),
+              border: Border.fromBorderSide(
+                BorderSide(color: Color(0xFF00FF00), width: 3),
               ),
             ),
             child: Column(
@@ -707,25 +704,26 @@ class _HomeScreenState extends State<HomeScreen>
                 // Header
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.emoji_events,
-                      color: Colors.purple.shade400,
+                      color: Color(0xFF00FF00),
                       size: 24,
                     ),
                     const SizedBox(width: 12),
-                    Expanded(
+                    const Expanded(
                       child: Text(
-                        'All Daily Challenges',
-                        style: GoogleFonts.comicNeue(
+                        'ALL DAILY CHALLENGES',
+                        style: TextStyle(
+                          fontFamily: 'monospace',
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade800,
+                          color: Color(0xFF00FF00),
                         ),
                       ),
                     ),
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(Icons.close, color: Colors.grey.shade600),
+                      icon: const Icon(Icons.close, color: Color(0xFF00FF00)),
                     ),
                   ],
                 ),
@@ -757,26 +755,31 @@ class _HomeScreenState extends State<HomeScreen>
                         // Future challenges preview
                         Container(
                           padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(12),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF000000),
+                            borderRadius: BorderRadius.zero,
+                            border: Border.fromBorderSide(
+                              BorderSide(color: Color(0xFF00FFFF), width: 2),
+                            ),
                           ),
-                          child: Column(
+                          child: const Column(
                             children: [
                               Text(
-                                '📅 Tomorrow\'s Preview',
-                                style: GoogleFonts.comicNeue(
+                                'TOMORROW\'S PREVIEW',
+                                style: TextStyle(
+                                  fontFamily: 'monospace',
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey.shade700,
+                                  color: Color(0xFF00FFFF),
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8),
                               Text(
-                                'New exciting challenges will be available tomorrow!\nIncluding couple bonding activities and pet evolution tasks.',
+                                'NEW EXCITING CHALLENGES WILL BE AVAILABLE TOMORROW!\nINCLUDING COUPLE BONDING ACTIVITIES AND PET EVOLUTION TASKS.',
                                 style: TextStyle(
+                                  fontFamily: 'monospace',
                                   fontSize: 12,
-                                  color: Colors.grey.shade600,
+                                  color: Color(0xFF00FF00),
                                   height: 1.4,
                                 ),
                                 textAlign: TextAlign.center,
@@ -797,16 +800,17 @@ class _HomeScreenState extends State<HomeScreen>
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple.shade400,
-                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFF00FF00),
+                      foregroundColor: const Color(0xFF000000),
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
                       ),
                     ),
-                    child: Text(
-                      'Let\'s Go!',
-                      style: GoogleFonts.comicNeue(
+                    child: const Text(
+                      'LET\'S GO!',
+                      style: TextStyle(
+                        fontFamily: 'monospace',
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),

@@ -52,49 +52,50 @@ class _MessageSectionState extends State<MessageSection> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
+      decoration: const BoxDecoration(
+        color: Color(0xFF1F1F1F),
+        borderRadius: BorderRadius.zero,
+        border: Border.fromBorderSide(
+          BorderSide(color: Color(0xFFFF00FF), width: 2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.favorite,
-                color: Colors.pink,
+                color: Color(0xFFFF00FF),
                 size: 24,
               ),
               const SizedBox(width: 10),
-              Text(
-                'Messages',
+              const Text(
+                'MESSAGES',
                 style: TextStyle(
+                  fontFamily: 'monospace',
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
+                  color: Color(0xFFFF00FF),
                 ),
               ),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.pink.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFF00FF),
+                  borderRadius: BorderRadius.zero,
+                  border: Border.fromBorderSide(
+                    BorderSide(color: Color(0xFF000000), width: 1),
+                  ),
                 ),
                 child: Text(
                   '${recentMessages.length}',
                   style: const TextStyle(
+                    fontFamily: 'monospace',
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: Colors.pink,
+                    color: Color(0xFF000000),
                   ),
                 ),
               ),

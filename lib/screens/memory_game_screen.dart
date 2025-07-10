@@ -43,28 +43,22 @@ class _MemoryGameScreenState extends State<MemoryGameScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Memory Game',
-          style: GoogleFonts.comicNeue(
+        title: const Text(
+          'MEMORY GAME',
+          style: TextStyle(
+            fontFamily: 'monospace',
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Color(0xFF00FF00),
           ),
         ),
-        backgroundColor: const Color(0xFF667eea),
+        backgroundColor: const Color(0xFF1F1F1F),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Color(0xFF00FF00)),
       ),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-            ],
-          ),
+          color: Color(0xFF000000),
         ),
         child: SafeArea(
           child: Consumer<PetService>(
@@ -133,19 +127,22 @@ class _MemoryGameScreenState extends State<MemoryGameScreen>
   Widget _buildGameStatus(MemoryGame game) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1F1F1F),
+        borderRadius: BorderRadius.zero,
+        border: Border.fromBorderSide(
+          BorderSide(color: Color(0xFF00FF00), width: 2),
+        ),
       ),
       child: Column(
         children: [
           Text(
-            game.gameWon ? '🎉 You Won!' : 'Find the matching pairs!',
-            style: GoogleFonts.comicNeue(
+            game.gameWon ? 'YOU WON!' : 'FIND THE MATCHING PAIRS!',
+            style: const TextStyle(
+              fontFamily: 'monospace',
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Color(0xFF00FF00),
             ),
             textAlign: TextAlign.center,
           ),
@@ -154,13 +151,13 @@ class _MemoryGameScreenState extends State<MemoryGameScreen>
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildStatusItem(
-                'Pairs Found',
+                'PAIRS FOUND',
                 '${game.matchedPairs}/8',
                 Icons.check_circle,
               ),
               _buildStatusItem(
-                'Status',
-                game.gameWon ? 'Complete!' : 'Playing',
+                'STATUS',
+                game.gameWon ? 'COMPLETE!' : 'PLAYING',
                 game.gameWon ? Icons.celebration : Icons.games,
               ),
             ],
@@ -173,19 +170,21 @@ class _MemoryGameScreenState extends State<MemoryGameScreen>
   Widget _buildStatusItem(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: Colors.white, size: 24),
+        Icon(icon, color: const Color(0xFF00FF00), size: 24),
         const SizedBox(height: 5),
         Text(
           label,
           style: const TextStyle(
-            color: Colors.white70,
+            fontFamily: 'monospace',
+            color: Color(0xFF00FFFF),
             fontSize: 12,
           ),
         ),
         Text(
           value,
           style: const TextStyle(
-            color: Colors.white,
+            fontFamily: 'monospace',
+            color: Color(0xFF00FF00),
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),

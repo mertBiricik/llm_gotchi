@@ -19,26 +19,23 @@ class ActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
+      decoration: const BoxDecoration(
+        color: Color(0xFF1F1F1F),
+        borderRadius: BorderRadius.zero,
+        border: Border.fromBorderSide(
+          BorderSide(color: Color(0xFF00FF00), width: 2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Pet Actions',
+          const Text(
+            'PET ACTIONS',
             style: TextStyle(
+              fontFamily: 'monospace',
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
+              color: Color(0xFF00FF00),
             ),
           ),
           const SizedBox(height: 15),
@@ -122,11 +119,11 @@ class ActionButtons extends StatelessWidget {
     return ElevatedButton(
       onPressed: enabled ? onPressed : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: enabled ? color : Colors.grey.shade300,
-        foregroundColor: Colors.white,
-        elevation: enabled ? 3 : 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+        backgroundColor: enabled ? const Color(0xFF00FF00) : const Color(0xFF555555),
+        foregroundColor: const Color(0xFF000000),
+        elevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
         ),
         padding: const EdgeInsets.symmetric(vertical: 8),
       ),
@@ -136,24 +133,26 @@ class ActionButtons extends StatelessWidget {
           Icon(
             icon,
             size: 20,
-            color: enabled ? Colors.white : Colors.grey.shade500,
+            color: enabled ? const Color(0xFF000000) : const Color(0xFF555555),
           ),
           const SizedBox(height: 4),
           Text(
-            label,
+            label.toUpperCase(),
             style: TextStyle(
+              fontFamily: 'monospace',
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: enabled ? Colors.white : Colors.grey.shade500,
+              color: enabled ? const Color(0xFF000000) : const Color(0xFF555555),
             ),
           ),
           if (cooldown.isNotEmpty) ...[
             const SizedBox(height: 2),
             Text(
-              cooldown,
+              cooldown.toUpperCase(),
               style: TextStyle(
+                fontFamily: 'monospace',
                 fontSize: 10,
-                color: enabled ? Colors.white70 : Colors.grey.shade400,
+                color: enabled ? const Color(0xFF000000) : const Color(0xFF555555),
               ),
             ),
           ],
@@ -174,20 +173,22 @@ class ActionButtons extends StatelessWidget {
   ) {
     return ElevatedButton.icon(
       onPressed: enabled ? onPressed : null,
-      icon: Icon(icon, size: 24),
+      icon: Icon(icon, size: 24, color: enabled ? const Color(0xFF000000) : const Color(0xFF555555)),
       label: Text(
-        label,
-        style: const TextStyle(
+        label.toUpperCase(),
+        style: TextStyle(
+          fontFamily: 'monospace',
           fontSize: 16,
           fontWeight: FontWeight.bold,
+          color: enabled ? const Color(0xFF000000) : const Color(0xFF555555),
         ),
       ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: enabled ? color : Colors.grey.shade300,
-        foregroundColor: Colors.white,
-        elevation: enabled ? 5 : 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+        backgroundColor: enabled ? const Color(0xFF00FF00) : const Color(0xFF555555),
+        foregroundColor: const Color(0xFF000000),
+        elevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
         ),
         padding: const EdgeInsets.symmetric(vertical: 15),
       ),

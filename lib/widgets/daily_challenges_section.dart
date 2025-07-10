@@ -161,25 +161,15 @@ class _DailyChallengeSectionState extends State<DailyChallengesSection>
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isCompleted
-                ? [
-                    Colors.green.shade50,
-                    Colors.green.shade100,
-                  ]
-                : [
-                    _getChallengeTypeColor(challenge.type).withOpacity(0.05),
-                    _getChallengeTypeColor(challenge.type).withOpacity(0.1),
-                  ],
-          ),
-          borderRadius: BorderRadius.circular(16),
+          color: isCompleted
+              ? const Color(0xFF00FF00)
+              : const Color(0xFF000000),
+          borderRadius: BorderRadius.zero,
           border: Border.all(
             color: isCompleted 
-                ? Colors.green.shade300
-                : _getChallengeTypeColor(challenge.type).withOpacity(0.3),
-            width: 1.5,
+                ? const Color(0xFF000000)
+                : _getChallengeTypeColor(challenge.type),
+            width: 2,
           ),
         ),
         child: Column(
@@ -192,8 +182,11 @@ class _DailyChallengeSectionState extends State<DailyChallengesSection>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: _getChallengeTypeColor(challenge.type).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10),
+                    color: _getChallengeTypeColor(challenge.type),
+                    borderRadius: BorderRadius.zero,
+                    border: const Border.fromBorderSide(
+                      BorderSide(color: Color(0xFF000000), width: 1),
+                    ),
                   ),
                   child: Text(
                     challenge.emoji,

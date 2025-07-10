@@ -88,34 +88,31 @@ class _SharingSectionState extends State<SharingSection> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
+      decoration: const BoxDecoration(
+        color: Color(0xFF1F1F1F),
+        borderRadius: BorderRadius.zero,
+        border: Border.fromBorderSide(
+          BorderSide(color: Color(0xFF00FF00), width: 2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.share,
-                color: Colors.blue,
+                color: Color(0xFF00FF00),
                 size: 24,
               ),
               const SizedBox(width: 10),
-              Text(
-                'Share with Partner',
+              const Text(
+                'SHARE WITH PARTNER',
                 style: TextStyle(
+                  fontFamily: 'monospace',
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
+                  color: Color(0xFF00FF00),
                 ),
               ),
             ],

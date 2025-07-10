@@ -17,49 +17,50 @@ class AchievementsSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
+      decoration: const BoxDecoration(
+        color: Color(0xFF1F1F1F),
+        borderRadius: BorderRadius.zero,
+        border: Border.fromBorderSide(
+          BorderSide(color: Color(0xFF00FFFF), width: 2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.emoji_events,
-                color: Colors.amber,
+                color: Color(0xFF00FFFF),
                 size: 24,
               ),
               const SizedBox(width: 10),
-              Text(
-                'Achievements',
+              const Text(
+                'ACHIEVEMENTS',
                 style: TextStyle(
+                  fontFamily: 'monospace',
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
+                  color: Color(0xFF00FFFF),
                 ),
               ),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.amber.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF00FFFF),
+                  borderRadius: BorderRadius.zero,
+                  border: Border.fromBorderSide(
+                    BorderSide(color: Color(0xFF000000), width: 1),
+                  ),
                 ),
                 child: Text(
                   '$unlockedCount/${achievements.length}',
                   style: const TextStyle(
+                    fontFamily: 'monospace',
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: Colors.amber,
+                    color: Color(0xFF000000),
                   ),
                 ),
               ),
@@ -70,23 +71,23 @@ class AchievementsSection extends StatelessWidget {
           // Progress indicator
           Container(
             height: 8,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(4),
+            decoration: const BoxDecoration(
+              color: Color(0xFF000000),
+              borderRadius: BorderRadius.zero,
+              border: Border.fromBorderSide(
+                BorderSide(color: Color(0xFF00FFFF), width: 1),
+              ),
             ),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
               widthFactor: unlockedCount / achievements.length,
               child: Container(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Colors.amber, Colors.orange],
-                  ),
-                  borderRadius: BorderRadius.circular(4),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF00FFFF),
+                  borderRadius: BorderRadius.zero,
                 ),
               ).animate()
-                .scale(duration: 800.ms, curve: Curves.easeOutQuart)
-                .shimmer(duration: 1500.ms, color: Colors.white.withOpacity(0.5)),
+                .scale(duration: 800.ms, curve: Curves.easeOutQuart),
             ),
           ),
           const SizedBox(height: 15),
@@ -110,14 +111,14 @@ class AchievementsSection extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: achievement.unlocked 
-            ? Colors.amber.withOpacity(0.1)
-            : Colors.grey.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12),
+            ? const Color(0xFF00FFFF)
+            : const Color(0xFF000000),
+        borderRadius: BorderRadius.zero,
         border: Border.all(
           color: achievement.unlocked 
-              ? Colors.amber.withOpacity(0.3)
-              : Colors.grey.withOpacity(0.2),
-          width: 1,
+              ? const Color(0xFF000000)
+              : const Color(0xFF555555),
+          width: 2,
         ),
       ),
       child: Row(
@@ -128,9 +129,12 @@ class AchievementsSection extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               color: achievement.unlocked 
-                  ? Colors.amber.withOpacity(0.2)
-                  : Colors.grey.withOpacity(0.1),
-              shape: BoxShape.circle,
+                  ? const Color(0xFF000000)
+                  : const Color(0xFF555555),
+              borderRadius: BorderRadius.zero,
+              border: const Border.fromBorderSide(
+                BorderSide(color: Color(0xFF00FFFF), width: 1),
+              ),
             ),
             child: Center(
               child: Text(
@@ -150,23 +154,25 @@ class AchievementsSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  achievement.name,
+                  achievement.name.toUpperCase(),
                   style: TextStyle(
+                    fontFamily: 'monospace',
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: achievement.unlocked 
-                        ? Colors.grey.shade800
-                        : Colors.grey.shade500,
+                        ? const Color(0xFF000000)
+                        : const Color(0xFF00FF00),
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  achievement.description,
+                  achievement.description.toUpperCase(),
                   style: TextStyle(
+                    fontFamily: 'monospace',
                     fontSize: 12,
                     color: achievement.unlocked 
-                        ? Colors.grey.shade600
-                        : Colors.grey.shade400,
+                        ? const Color(0xFF000000)
+                        : const Color(0xFF555555),
                   ),
                 ),
               ],

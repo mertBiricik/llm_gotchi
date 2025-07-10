@@ -48,16 +48,12 @@ class _StatsGridState extends State<StatsGrid>
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
+      decoration: const BoxDecoration(
+        color: Color(0xFF1F1F1F),
+        borderRadius: BorderRadius.zero,
+        border: Border.fromBorderSide(
+          BorderSide(color: Color(0xFF00FF00), width: 2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,36 +61,38 @@ class _StatsGridState extends State<StatsGrid>
           // Header
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.analytics,
-                color: Colors.grey.shade700,
+                color: Color(0xFF00FF00),
                 size: 20,
               ),
               const SizedBox(width: 8),
-              Text(
-                'Pet Vitals',
-                style: GoogleFonts.comicNeue(
+              const Text(
+                'PET VITALS',
+                style: TextStyle(
+                  fontFamily: 'monospace',
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
+                  color: Color(0xFF00FF00),
                 ),
               ),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getOverallHealthColor().withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: _getOverallHealthColor().withOpacity(0.3),
+                  color: _getOverallHealthColor(),
+                  borderRadius: BorderRadius.zero,
+                  border: const Border.fromBorderSide(
+                    BorderSide(color: Color(0xFF000000), width: 2),
                   ),
                 ),
                 child: Text(
                   _getOverallHealthText(),
-                  style: TextStyle(
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: _getOverallHealthColor(),
+                    color: Color(0xFF000000),
                   ),
                 ),
               ),
