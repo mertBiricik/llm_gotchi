@@ -1,1 +1,0 @@
- build/web/index.html build/web/manifest.json:  /mnt/d/courses/llm_gotchi/web/index.html /mnt/d/courses/llm_gotchi/web/manifest.json
