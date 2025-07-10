@@ -42,8 +42,8 @@ class PetService extends ChangeNotifier {
   MemoryGame get memoryGame => _memoryGame;
   SoundService get soundService => _soundService;
 
-  static const String _storageKey = 'ldrGotchi';
-  static const String _achievementsKey = 'ldrGotchiAchievements';
+  static const String _storageKey = 'tenderTouch';
+  static const String _achievementsKey = 'tenderTouchAchievements';
 
   PetService() {
     _initializeAchievements();
@@ -59,10 +59,10 @@ class PetService extends ChangeNotifier {
     _updateTimer?.cancel(); // Ensure no duplicate timers
     _updateTimer = Timer.periodic(updateInterval, (timer) {
       try {
-        _updateStats();
-        _updateAge();
-        _checkAchievements();
-        notifyListeners();
+      _updateStats();
+      _updateAge();
+      _checkAchievements();
+      notifyListeners();
       } catch (e) {
         debugPrint('Error in update timer: $e');
       }
@@ -147,7 +147,7 @@ class PetService extends ChangeNotifier {
     final newAge = timeDiff.inDays;
 
     if (newAge != _pet.age) {
-      // Update stage based on age
+    // Update stage based on age
       PetStage newStage = _pet.stage;
       if (newAge >= 7) {
         newStage = PetStage.adult;
@@ -417,9 +417,9 @@ class PetService extends ChangeNotifier {
 
   String exportPetData() {
     try {
-      final exportData = _pet.toJson();
-      exportData['exportTime'] = DateTime.now().millisecondsSinceEpoch;
-      return base64Encode(utf8.encode(jsonEncode(exportData)));
+    final exportData = _pet.toJson();
+    exportData['exportTime'] = DateTime.now().millisecondsSinceEpoch;
+    return base64Encode(utf8.encode(jsonEncode(exportData)));
     } catch (e) {
       debugPrint('Error exporting pet data: $e');
       return '';

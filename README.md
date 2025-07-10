@@ -1,6 +1,6 @@
-# LDR Gotchi - Long Distance Relationship Tamagotchi
+# TenderTouch - Virtual Pet for Couples
 
-A Flutter virtual pet app designed for long-distance relationships, allowing partners to care for a shared digital pet.
+A Flutter virtual pet app where couples share gentle, loving care for their digital companion across any distance.
 
 ## ✨ Recent Optimizations (v3.0)
 

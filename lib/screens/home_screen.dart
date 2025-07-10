@@ -178,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen>
     return Column(
       children: [
         Text(
-          'LDR Gotchi',
+          'TenderTouch',
           style: GoogleFonts.comicNeue(
             fontSize: 32,
             fontWeight: FontWeight.bold,
@@ -187,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen>
         ),
         const SizedBox(height: 5),
         Text(
-          'Long Distance Tamagotchi',
+          'Gentle Care, Shared Love',
           style: GoogleFonts.comicNeue(
             fontSize: 16,
             color: Colors.white.withOpacity(0.9),

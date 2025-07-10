@@ -16,7 +16,7 @@ class LDRGotchiApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => PetService(),
       child: MaterialApp(
-        title: 'LDR Gotchi',
+        title: 'TenderTouch',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
