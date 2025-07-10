@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../models/pet.dart';
+import '../theme/retro_theme.dart';
 
 class PetDisplay extends StatefulWidget {
   final Pet pet;
@@ -139,17 +140,59 @@ class _PetDisplayState extends State<PetDisplay>
     widget.onPetTap?.call();
   }
 
+  String _getMoodText() {
+    if (widget.pet.isDead) return 'SYSTEM OFFLINE';
+    
+    switch (widget.pet.mood) {
+      case PetMood.happy:
+        return 'FEELING GREAT!';
+      case PetMood.sad:
+        return 'FEELING SAD';
+      case PetMood.neutral:
+        return 'SYSTEM NORMAL';
+      case PetMood.sick:
+        return 'DIAGNOSTIC REQUIRED';
+      case PetMood.sleeping:
+        return 'SLEEP MODE';
+      case PetMood.dead:
+        return 'SYSTEM OFFLINE';
+      default:
+        return 'STATUS UNKNOWN';
+    }
+  }
+
+  Color _getMoodColor() {
+    if (widget.pet.isDead) return Colors.red;
+    
+    switch (widget.pet.mood) {
+      case PetMood.happy:
+        return RetroTheme.primaryGreen;
+      case PetMood.sad:
+        return RetroTheme.energyColor;
+      case PetMood.neutral:
+        return RetroTheme.terminalAmber;
+      case PetMood.sick:
+        return RetroTheme.healthColor;
+      case PetMood.sleeping:
+        return RetroTheme.energyColor;
+      case PetMood.dead:
+        return Colors.red;
+      default:
+        return RetroTheme.primaryGreen;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: const Color(0xFF1F1F1F),
+        color: RetroTheme.deepBlack,
         borderRadius: BorderRadius.zero,
         border: Border.all(
-          color: _getBackgroundColor(),
-          width: 3,
+          color: _getMoodColor(),
+          width: 2,
         ),
       ),
       child: Column(
@@ -157,346 +200,81 @@ class _PetDisplayState extends State<PetDisplay>
           // Pet Container with interactions
           GestureDetector(
             onTap: _onPetTapped,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Animated background square
-                AnimatedBuilder(
-                  animation: _breathingAnimation,
-                  builder: (context, child) {
-                    return Container(
-                      width: 140,
-                      height: 140,
-                      decoration: BoxDecoration(
-                        color: _getBackgroundColor(),
-                        borderRadius: BorderRadius.zero,
-                        border: Border.all(
-                          color: const Color(0xFF000000),
-                          width: 2,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-
-                // Particle effects for happy mood
-                if (widget.pet.mood == PetMood.happy && !widget.pet.isDead)
+            child: Container(
+              height: 80,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0xFF003366), // Dark blue background like in image
+                border: Border.all(color: _getMoodColor(), width: 2),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Pet sprite with enhanced animations
                   AnimatedBuilder(
-                    animation: _particleAnimation,
+                    animation: Listenable.merge([_breathingAnimation, _tapAnimation]),
                     builder: (context, child) {
-                      return CustomPaint(
-                        size: const Size(140, 140),
-                        painter: ParticlePainter(
-                          particles: _particles,
-                          animationValue: _particleAnimation.value,
+                      return Transform.scale(
+                        scale: _breathingAnimation.value * _tapAnimation.value,
+                        child: Text(
+                          '🐣', // Simple emoji pet for now
+                          style: const TextStyle(fontSize: 32),
                         ),
                       );
                     },
                   ),
 
-                // Pet sprite with enhanced animations
-                AnimatedBuilder(
-                  animation: Listenable.merge([_breathingAnimation, _tapAnimation]),
-                  builder: (context, child) {
-                    final scale = widget.pet.isDead 
-                        ? _tapAnimation.value 
-                        : _breathingAnimation.value * _tapAnimation.value;
-                    
-                    return Transform.scale(
-                      scale: scale,
+                  // Heart effect when tapped
+                  if (_showHeart)
+                    const Positioned(
+                      top: 10,
+                      right: 20,
                       child: Text(
-                        _getPixelPetSprite(),
-                        style: const TextStyle(
-                          fontSize: 64,
-                          fontFamily: 'monospace',
-                          color: Color(0xFF00FF00),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-
-                // Floating heart on tap
-                if (_showHeart)
-                  Positioned(
-                    top: 20,
-                    right: 20,
-                    child: const Text(
-                      '<3',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontFamily: 'monospace',
-                        color: Color(0xFFFF00FF),
-                        fontWeight: FontWeight.bold,
+                        '❤️',
+                        style: TextStyle(fontSize: 16),
                       ),
                     ).animate()
                       .fadeIn(duration: 300.ms)
                       .scale(begin: const Offset(0.5, 0.5))
-                      .moveY(begin: 0, end: -30, duration: 1500.ms)
-                      .fadeOut(delay: 1000.ms, duration: 500.ms),
-                  ),
+                      .moveY(begin: 0, end: -20, duration: 1000.ms)
+                      .fadeOut(delay: 1000.ms),
 
-                // Customize button
-                Positioned(
-                  bottom: -10,
-                  right: -10,
-                  child: GestureDetector(
-                    onTap: widget.onPetCustomize,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF00FF00),
-                        borderRadius: BorderRadius.zero,
-                        border: Border.fromBorderSide(
-                          BorderSide(color: Color(0xFF000000), width: 2),
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.edit,
-                        size: 16,
-                        color: Color(0xFF000000),
-                      ),
+                  // Particle effects for happy mood
+                  if (widget.pet.mood == PetMood.happy && !widget.pet.isDead)
+                    AnimatedBuilder(
+                      animation: _particleAnimation,
+                      builder: (context, child) {
+                        return CustomPaint(
+                          size: const Size(double.infinity, 80),
+                          painter: ParticlePainter(
+                            particles: _particles,
+                            animationValue: _particleAnimation.value,
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          
-          const SizedBox(height: 20),
 
-          // Pet Info Section
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Text(
-                  widget.pet.name.toUpperCase(),
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF00FF00),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-          
           const SizedBox(height: 8),
 
-          // Stage and Age Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Stage Badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: _getStageColor(),
-                  borderRadius: BorderRadius.zero,
-                  border: Border.all(
-                    color: const Color(0xFF000000),
-                    width: 2,
-                  ),
-                ),
-                child: Text(
-                  _getStageText().toUpperCase(),
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF000000),
-                  ),
-                ),
-              ),
-              
-              const SizedBox(width: 12),
-              
-              // Age Badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF00FFFF),
-                  borderRadius: BorderRadius.zero,
-                  border: Border.fromBorderSide(
-                    BorderSide(color: Color(0xFF000000), width: 2),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.cake,
-                      size: 14,
-                      color: Color(0xFF000000),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${widget.pet.age}D',
-                      style: const TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF000000),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          // Pet status text
+          Text(
+            _getMoodText(),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: _getMoodColor(),
+            ),
+            textAlign: TextAlign.center,
           ),
-          
-          const SizedBox(height: 12),
-
-          // Enhanced Status with mood indicator
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1F1F1F),
-              borderRadius: BorderRadius.zero,
-              border: Border.all(
-                color: _getStatusColor(),
-                width: 2,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(),
-                    shape: BoxShape.circle,
-                  ),
-                ).animate(target: widget.pet.mood == PetMood.happy ? 1 : 0)
-                  .scale(duration: const Duration(milliseconds: 1000))
-                  .then()
-                  .scale(duration: const Duration(milliseconds: 1000), begin: const Offset(1.0, 1.0), end: const Offset(1.2, 1.2))
-                  .then()
-                  .scale(duration: const Duration(milliseconds: 1000), begin: const Offset(1.2, 1.2), end: const Offset(1.0, 1.0)),
-                
-                const SizedBox(width: 8),
-                
-                Flexible(
-                  child: Text(
-                    widget.pet.statusText.toUpperCase(),
-                    style: TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 16,
-                      color: _getStatusColor(),
-                      fontWeight: FontWeight.w600,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Interaction stats
-          if (widget.pet.totalInteractions > 0) ...[
-            const SizedBox(height: 12),
-            Text(
-              '${widget.pet.totalInteractions} LOVING INTERACTIONS <3',
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 12,
-                color: Color(0xFF00FFFF),
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
         ],
       ),
     );
   }
-
-  String _getPixelPetSprite() {
-    if (widget.pet.isDead) return 'X_X';
-    if (widget.pet.isSleeping) return 'z_z';
-    
-    switch (widget.pet.mood) {
-      case PetMood.happy:
-        return '^_^';
-      case PetMood.sad:
-        return 'T_T';
-      case PetMood.sick:
-        return '@_@';
-      case PetMood.neutral:
-        return 'o_o';
-      default:
-        return '-_-';
-    }
-  }
-
-  Color _getBackgroundColor() {
-    if (widget.pet.isDead) return const Color(0xFF555555);
-    if (widget.pet.isSleeping) return const Color(0xFF0000FF);
-    
-    switch (widget.pet.mood) {
-      case PetMood.happy:
-        return const Color(0xFFFFFF00);
-      case PetMood.sad:
-        return const Color(0xFF0080FF);
-      case PetMood.sick:
-        return const Color(0xFFFF0000);
-      case PetMood.neutral:
-        return const Color(0xFF00FF00);
-      default:
-        return const Color(0xFF808080);
-    }
-  }
-
-  Color _getStageColor() {
-    switch (widget.pet.stage) {
-      case PetStage.egg:
-        return const Color(0xFFFF8000);
-      case PetStage.baby:
-        return const Color(0xFFFF00FF);
-      case PetStage.child:
-        return const Color(0xFF00FFFF);
-      case PetStage.adult:
-        return const Color(0xFF8000FF);
-    }
-  }
-
-  String _getStageText() {
-    switch (widget.pet.stage) {
-      case PetStage.egg:
-        return 'egg';
-      case PetStage.baby:
-        return 'baby';
-      case PetStage.child:
-        return 'child';
-      case PetStage.adult:
-        return 'adult';
-    }
-  }
-
-  Color _getStatusColor() {
-    if (widget.pet.isDead) return const Color(0xFFFF0000);
-    if (widget.pet.isSleeping) return const Color(0xFF0000FF);
-    
-    switch (widget.pet.mood) {
-      case PetMood.happy:
-        return const Color(0xFF00FF00);
-      case PetMood.sad:
-        return const Color(0xFFFF8000);
-      case PetMood.sick:
-        return const Color(0xFFFF0000);
-      case PetMood.neutral:
-        return const Color(0xFF00FFFF);
-      default:
-        return const Color(0xFF808080);
-    }
-  }
 }
 
-// Particle class for happiness effects
+// Particle class for animation effects
 class Particle {
   double x;
   double y;
@@ -525,8 +303,10 @@ class ParticlePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
-    
+    final paint = Paint()
+      ..color = Colors.yellow.withValues(alpha: 0.7)
+      ..style = PaintingStyle.fill;
+
     for (final particle in particles) {
       // Update particle position
       particle.y -= particle.speed;
@@ -534,23 +314,19 @@ class ParticlePainter extends CustomPainter {
         particle.y = 1.0;
         particle.x = Random().nextDouble();
       }
-      
+
       // Draw particle
-      paint.color = const Color(0xFFFFFF00).withOpacity(particle.opacity * 0.6);
-      canvas.drawRect(
-        Rect.fromCenter(
-          center: Offset(
-            particle.x * size.width,
-            particle.y * size.height,
-          ),
-          width: particle.size * 2,
-          height: particle.size * 2,
+      canvas.drawCircle(
+        Offset(
+          particle.x * size.width,
+          particle.y * size.height,
         ),
-        paint,
+        particle.size,
+        paint..color = Colors.yellow.withValues(alpha: particle.opacity),
       );
     }
   }
 
   @override
-  bool shouldRepaint(ParticlePainter oldDelegate) => true;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 } 

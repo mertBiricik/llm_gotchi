@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:intl/intl.dart';
-import '../services/pet_service.dart';
+import '../theme/retro_theme.dart';
 
 class MessageSection extends StatefulWidget {
-  final PetService petService;
-
-  const MessageSection({
-    super.key,
-    required this.petService,
-  });
+  const MessageSection({super.key});
 
   @override
   State<MessageSection> createState() => _MessageSectionState();
@@ -17,230 +10,95 @@ class MessageSection extends StatefulWidget {
 
 class _MessageSectionState extends State<MessageSection> {
   final TextEditingController _messageController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
     _messageController.dispose();
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _sendMessage() {
-    final message = _messageController.text.trim();
-    if (message.isNotEmpty) {
-      widget.petService.sendMessage(message);
-      _messageController.clear();
-      
-      // Scroll to bottom after sending
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final recentMessages = widget.petService.getRecentMessages();
-    
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-        color: Color(0xFF1F1F1F),
-        borderRadius: BorderRadius.zero,
-        border: Border.fromBorderSide(
-          BorderSide(color: Color(0xFFFF00FF), width: 2),
-        ),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: RetroTheme.deepBlack,
+        border: Border.all(color: RetroTheme.primaryGreen, width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.favorite,
-                color: Color(0xFFFF00FF),
-                size: 24,
-              ),
-              const SizedBox(width: 10),
-              const Text(
-                'MESSAGES',
-                style: TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFFF00FF),
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFF00FF),
-                  borderRadius: BorderRadius.zero,
-                  border: Border.fromBorderSide(
-                    BorderSide(color: Color(0xFF000000), width: 1),
-                  ),
-                ),
-                child: Text(
-                  '${recentMessages.length}',
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF000000),
-                  ),
-                ),
-              ),
-            ],
+          Text(
+            'SEND MESSAGE TO PARTNER',
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 8),
           
-          // Message input
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  decoration: InputDecoration(
-                    hintText: 'Send a message to your partner...',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.pink),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 12,
-                    ),
-                  ),
-                  onSubmitted: (_) => _sendMessage(),
-                  maxLines: null,
-                  textCapitalization: TextCapitalization.sentences,
-                ),
+          // Message input field
+          TextField(
+            controller: _messageController,
+            style: Theme.of(context).textTheme.bodySmall,
+            decoration: InputDecoration(
+              hintText: 'TYPE MESSAGE...',
+              hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey,
               ),
-              const SizedBox(width: 10),
-              FloatingActionButton.small(
-                onPressed: _sendMessage,
-                backgroundColor: Colors.pink,
-                child: const Icon(
-                  Icons.send,
-                  color: Colors.white,
-                  size: 20,
-                ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.zero,
+                borderSide: BorderSide(color: RetroTheme.primaryGreen, width: 2),
               ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          
-          // Message history
-          if (recentMessages.isEmpty)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.zero,
+                borderSide: BorderSide(color: RetroTheme.primaryGreen, width: 2),
               ),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.chat_bubble_outline,
-                    color: Colors.grey.shade400,
-                    size: 40,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'No messages yet',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade500,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    'Send your first message to your partner!',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ).animate()
-              .fadeIn(duration: 600.ms)
-              .slideY(begin: 0.3, duration: 600.ms, curve: Curves.easeOut)
-          else
-            Container(
-              height: 200,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.all(12),
-                itemCount: recentMessages.length,
-                itemBuilder: (context, index) {
-                  final message = recentMessages[index];
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: index < recentMessages.length - 1 ? 12 : 0,
-                    ),
-                    child: _buildMessageBubble(message.text, message.timestamp)
-                        .animate(delay: Duration(milliseconds: index * 100))
-                        .slideX(begin: 0.5, duration: 400.ms, curve: Curves.easeOut)
-                        .fadeIn(),
-                  );
-                },
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.zero,
+                borderSide: BorderSide(color: RetroTheme.terminalAmber, width: 2),
               ),
             ),
+            maxLines: 1,
+          ),
+          
+          const SizedBox(height: 8),
+          
+          // Transmit button
+          SizedBox(
+            width: double.infinity,
+            height: 32,
+            child: ElevatedButton(
+              onPressed: () {
+                if (_messageController.text.trim().isNotEmpty) {
+                  _sendMessage(_messageController.text.trim());
+                  _messageController.clear();
+                }
+              },
+              style: RetroTheme.greenButtonStyle(),
+              child: Text(
+                'TRANSMIT',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildMessageBubble(String text, DateTime timestamp) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.pink.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.pink.withOpacity(0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade800,
-            ),
+  void _sendMessage(String message) {
+    // Implement message sending logic here
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'MESSAGE TRANSMITTED: $message',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: RetroTheme.deepBlack,
           ),
-          const SizedBox(height: 5),
-          Text(
-            DateFormat('MMM d, HH:mm').format(timestamp),
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade500,
-            ),
-          ),
-        ],
+        ),
+        backgroundColor: RetroTheme.primaryGreen,
+        behavior: SnackBarBehavior.floating,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
