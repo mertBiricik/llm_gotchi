@@ -14,48 +14,6 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "audioplayers",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/audioplayers-5.2.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "audioplayers_android",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/audioplayers_android-4.0.3",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "audioplayers_darwin",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/audioplayers_darwin-5.0.2",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "audioplayers_linux",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/audioplayers_linux-3.1.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "audioplayers_platform_interface",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/audioplayers_platform_interface-6.1.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "audioplayers_web",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/audioplayers_web-4.1.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "audioplayers_windows",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/audioplayers_windows-3.1.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
       "name": "boolean_selector",
       "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/boolean_selector-2.1.2",
       "packageUri": "lib/",
@@ -86,12 +44,6 @@
       "languageVersion": "2.17"
     },
     {
-      "name": "crypto",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/crypto-3.0.3",
-      "packageUri": "lib/",
-      "languageVersion": "2.19"
-    },
-    {
       "name": "cupertino_icons",
       "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.8",
       "packageUri": "lib/",
@@ -116,14 +68,8 @@
       "languageVersion": "3.0"
     },
     {
-      "name": "fixnum",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/fixnum-1.1.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.1"
-    },
-    {
       "name": "flutter",
-      "rootUri": "file:///home/ottobeeth/flutter/packages/flutter",
+      "rootUri": "file:///home/ottobeeth/development/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -147,45 +93,21 @@
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///home/ottobeeth/flutter/packages/flutter_test",
+      "rootUri": "file:///home/ottobeeth/development/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///home/ottobeeth/flutter/packages/flutter_web_plugins",
+      "rootUri": "file:///home/ottobeeth/development/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.7"
-    },
-    {
-      "name": "google_fonts",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/google_fonts-6.2.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.14"
-    },
-    {
-      "name": "http",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/http-1.2.2",
-      "packageUri": "lib/",
-      "languageVersion": "3.3"
-    },
-    {
-      "name": "http_parser",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/http_parser-4.0.2",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
     },
     {
       "name": "intl",
       "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/intl-0.19.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
-    },
-    {
-      "name": "js",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/js-0.6.7",
-      "packageUri": "lib/",
-      "languageVersion": "2.19"
     },
     {
       "name": "leak_tracker",
@@ -240,24 +162,6 @@
       "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/path-1.9.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
-    },
-    {
-      "name": "path_provider",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/path_provider-2.1.4",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
-    },
-    {
-      "name": "path_provider_android",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/path_provider_android-2.2.4",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
-    },
-    {
-      "name": "path_provider_foundation",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.3"
     },
     {
       "name": "path_provider_linux",
@@ -339,7 +243,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///home/ottobeeth/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///home/ottobeeth/development/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -348,12 +252,6 @@
       "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/source_span-1.10.1",
       "packageUri": "lib/",
       "languageVersion": "3.1"
-    },
-    {
-      "name": "sprintf",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/sprintf-7.0.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
     },
     {
       "name": "stack_trace",
@@ -374,12 +272,6 @@
       "languageVersion": "3.1"
     },
     {
-      "name": "synchronized",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/synchronized-3.1.0+1",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
       "name": "term_glyph",
       "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/term_glyph-1.2.2",
       "packageUri": "lib/",
@@ -390,18 +282,6 @@
       "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/test_api-0.7.4",
       "packageUri": "lib/",
       "languageVersion": "3.5"
-    },
-    {
-      "name": "typed_data",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/typed_data-1.3.2",
-      "packageUri": "lib/",
-      "languageVersion": "2.17"
-    },
-    {
-      "name": "uuid",
-      "rootUri": "file:///home/ottobeeth/.pub-cache/hosted/pub.dev/uuid-4.5.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
     },
     {
       "name": "vector_math",
@@ -428,7 +308,7 @@
       "languageVersion": "3.3"
     },
     {
-      "name": "ldr_gotchi",
+      "name": "pixelpair",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.0"
@@ -436,7 +316,7 @@
   ],
   "generator": "pub",
   "generatorVersion": "3.8.1",
-  "flutterRoot": "file:///home/ottobeeth/flutter",
+  "flutterRoot": "file:///home/ottobeeth/development/flutter",
   "flutterVersion": "3.32.6",
   "pubCache": "file:///home/ottobeeth/.pub-cache"
 }

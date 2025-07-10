@@ -1,5 +1,5 @@
-name: tender_touch
-description: A virtual pet app for couples to share gentle, loving care across any distance
+name: pixelpair
+description: A retro 8-bit virtual pet app for couples to share pixelated love across any distance
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -11,13 +11,12 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.2.2
-  audioplayers: ^5.2.1
   confetti: ^0.7.0
   animated_text_kit: ^4.2.2
   provider: ^6.1.1
   intl: ^0.19.0
   flutter_animate: ^4.5.0
-  google_fonts: ^6.1.0
+
 
 dev_dependencies:
   flutter_test:

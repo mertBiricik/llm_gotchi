@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -6,18 +5,6 @@ import 'package:flutter/services.dart';
 class SoundService {
   static const String _soundEnabledKey = 'soundEnabled';
   bool _soundEnabled = true;
-  final AudioPlayer _audioPlayer = AudioPlayer();
-
-  // Sound frequencies for synthetic sounds
-  static const Map<String, double> _soundFrequencies = {
-    'feed': 440.0,    // A4 note
-    'play': 660.0,    // E5 note
-
-    'clean': 880.0,   // A5 note
-    'sleep': 220.0,   // A3 note
-    'achievement': 1000.0, // Higher celebratory tone
-    'message': 800.0, // Message notification tone
-  };
 
   bool get soundEnabled => _soundEnabled;
 
@@ -49,62 +36,38 @@ class SoundService {
     if (!_soundEnabled) return;
 
     try {
-      // Use system feedback for a simple beep sound
+      // Use system feedback for retro beep sound
       await SystemSound.play(SystemSoundType.click);
     } catch (e) {
       debugPrint('System sound not available: $e');
     }
   }
 
-  Future<void> _playAssetSound(String soundPath) async {
-    if (!_soundEnabled) return;
-
-    try {
-      await _audioPlayer.play(AssetSource(soundPath));
-    } catch (e) {
-      debugPrint('Asset sound not available ($soundPath): $e');
-      // Fallback to system sound
-      await _playSystemSound();
-    }
-  }
-
   void playFeedSound() {
-    _playSound('feed');
+    _playSystemSound();
   }
 
   void playPlaySound() {
-    _playSound('play');
+    _playSystemSound();
   }
 
   void playCleanSound() {
-    _playSound('clean');
+    _playSystemSound();
   }
 
   void playSleepSound() {
-    _playSound('sleep');
+    _playSystemSound();
   }
 
   void playAchievementSound() {
-    _playSound('achievement');
+    _playSystemSound();
   }
 
   void playMessageSound() {
-    _playSound('message');
-  }
-
-  void _playSound(String soundType) {
-    if (!_soundEnabled) return;
-
-    // Try to play asset sound first, fallback to system sound
-    final soundPath = 'sounds/$soundType.mp3';
-    _playAssetSound(soundPath);
+    _playSystemSound();
   }
 
   void dispose() {
-    try {
-      _audioPlayer.dispose();
-    } catch (e) {
-      debugPrint('Error disposing audio player: $e');
-    }
+    // No cleanup needed for system sounds
   }
 } 

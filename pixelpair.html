@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPair - 8-Bit Pet for Couples</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', monospace;
+            background: linear-gradient(45deg, #2c1810, #1a0d08);
+            min-height: 100vh;
+            color: #fff;
+            font-size: 8px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 16px;
+            background: #000;
+            border: 4px solid #333;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+            padding: 8px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+        }
+        
+        .title {
+            color: #00ff00;
+            font-size: 12px;
+            text-shadow: 2px 2px 0px #004400;
+            margin-bottom: 4px;
+        }
+        
+        .subtitle {
+            color: #ffff00;
+            font-size: 6px;
+        }
+        
+        .pet-display {
+            text-align: center;
+            padding: 20px;
+            background: #001122;
+            border: 2px solid #003344;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .pet-sprite {
+            font-size: 48px;
+            margin-bottom: 8px;
+            filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.5));
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
+        
+        .pet-status {
+            font-size: 8px;
+            color: #00ccff;
+            margin-top: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .stat-bar {
+            background: #222;
+            border: 2px solid #444;
+            padding: 8px;
+        }
+        
+        .stat-label {
+            font-size: 6px;
+            color: #ccc;
+            margin-bottom: 4px;
+        }
+        
+        .stat-value {
+            height: 8px;
+            background: #111;
+            border: 1px solid #333;
+            position: relative;
+        }
+        
+        .stat-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .health-fill { background: linear-gradient(90deg, #ff0040, #ff4080); }
+        .hunger-fill { background: linear-gradient(90deg, #ff8000, #ffaa40); }
+        .happiness-fill { background: linear-gradient(90deg, #00ff80, #40ffaa); }
+        .energy-fill { background: linear-gradient(90deg, #0080ff, #40aaff); }
+        
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .pixel-btn {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            padding: 12px 8px;
+            border: 2px solid;
+            background: #222;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.1s ease;
+            position: relative;
+        }
+        
+        .pixel-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+        }
+        
+        .pixel-btn:active {
+            transform: translate(0px, 0px);
+            box-shadow: none;
+        }
+        
+        .pixel-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .feed-btn { border-color: #ff4040; color: #ff4040; }
+        .play-btn { border-color: #40ff40; color: #40ff40; }
+        .clean-btn { border-color: #4040ff; color: #4040ff; }
+        .sleep-btn { border-color: #ff40ff; color: #ff40ff; }
+        
+        .feed-btn:hover { background: #ff4040; color: #000; }
+        .play-btn:hover { background: #40ff40; color: #000; }
+        .clean-btn:hover { background: #4040ff; color: #000; }
+        .sleep-btn:hover { background: #ff40ff; color: #000; }
+        
+        .message-section {
+            background: #111;
+            border: 2px solid #333;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .message-title {
+            font-size: 8px;
+            color: #ffff00;
+            margin-bottom: 8px;
+        }
+        
+        .message-input {
+            width: 100%;
+            padding: 8px;
+            background: #000;
+            border: 2px solid #333;
+            color: #00ff00;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .send-btn {
+            width: 100%;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            padding: 8px;
+            background: #004400;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            cursor: pointer;
+        }
+        
+        .send-btn:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        .achievements {
+            background: #1a1a00;
+            border: 2px solid #333;
+            padding: 12px;
+        }
+        
+        .achievement-title {
+            font-size: 8px;
+            color: #ffff00;
+            margin-bottom: 8px;
+        }
+        
+        .achievement-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+        }
+        
+        .achievement {
+            text-align: center;
+            padding: 8px 4px;
+            background: #222;
+            border: 1px solid #444;
+            font-size: 16px;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+        
+        .achievement.unlocked {
+            filter: grayscale(0%);
+            background: #004400;
+            border-color: #00ff00;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(0, 255, 0, 0.3); }
+            to { box-shadow: 0 0 15px rgba(0, 255, 0, 0.8); }
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 16px;
+            padding: 8px;
+            background: #000;
+            border: 2px solid #333;
+            font-size: 6px;
+            color: #666;
+        }
+        
+        .pixels {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 25% 25%, #333 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, #333 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="pixels"></div>
+        
+        <div class="header">
+            <div class="title">PIXELPAIR</div>
+            <div class="subtitle">8-BIT LOVE CONNECTION</div>
+        </div>
+        
+        <div class="pet-display">
+            <div class="pet-sprite" id="petSprite">🐣</div>
+            <div class="pet-status" id="petStatus">HATCHING...</div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-bar">
+                <div class="stat-label">HEALTH</div>
+                <div class="stat-value">
+                    <div class="stat-fill health-fill" id="healthBar" style="width: 100%"></div>
+                </div>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-label">HUNGER</div>
+                <div class="stat-value">
+                    <div class="stat-fill hunger-fill" id="hungerBar" style="width: 20%"></div>
+                </div>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-label">HAPPY</div>
+                <div class="stat-value">
+                    <div class="stat-fill happiness-fill" id="happyBar" style="width: 80%"></div>
+                </div>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-label">ENERGY</div>
+                <div class="stat-value">
+                    <div class="stat-fill energy-fill" id="energyBar" style="width: 90%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="pixel-btn feed-btn" onclick="feedPet()">FEED</button>
+            <button class="pixel-btn play-btn" onclick="playWithPet()">PLAY</button>
+            <button class="pixel-btn clean-btn" onclick="cleanPet()">CLEAN</button>
+            <button class="pixel-btn sleep-btn" onclick="sleepPet()">SLEEP</button>
+        </div>
+        
+        <div class="message-section">
+            <div class="message-title">SEND MESSAGE TO PARTNER</div>
+            <input type="text" class="message-input" id="messageInput" placeholder="TYPE MESSAGE..." maxlength="50">
+            <button class="send-btn" onclick="sendMessage()">TRANSMIT</button>
+        </div>
+        
+        <div class="achievements">
+            <div class="achievement-title">ACHIEVEMENTS</div>
+            <div class="achievement-list">
+                <div class="achievement" id="achievement1">🍼</div>
+                <div class="achievement" id="achievement2">😊</div>
+                <div class="achievement" id="achievement3">📅</div>
+                <div class="achievement" id="achievement4">🧠</div>
+                <div class="achievement" id="achievement5">💌</div>
+                <div class="achievement" id="achievement6">🎓</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            PRESS START TO CONTINUE • PIXELPAIR v1.0
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let pet = {
+            health: 100,
+            hunger: 20,
+            happiness: 80,
+            energy: 90,
+            stage: 'baby',
+            age: 0,
+            interactions: 0,
+            messages: []
+        };
+        
+        let achievements = [
+            { id: 'firstFeed', unlocked: false, emoji: '🍼' },
+            { id: 'happy', unlocked: false, emoji: '😊' },
+            { id: 'week', unlocked: false, emoji: '📅' },
+            { id: 'smart', unlocked: false, emoji: '🧠' },
+            { id: 'social', unlocked: false, emoji: '💌' },
+            { id: 'adult', unlocked: false, emoji: '🎓' }
+        ];
+        
+        // Pet sprites for different stages and moods
+        const petSprites = {
+            baby: { happy: '🐣', sad: '😢', sick: '🤒', sleeping: '😴', dead: '💀' },
+            child: { happy: '🐥', sad: '😞', sick: '🤢', sleeping: '💤', dead: '👻' },
+            adult: { happy: '🐤', sad: '😔', sick: '😷', sleeping: '😴', dead: '💀' }
+        };
+        
+        // Sound effects (8-bit style beeps)
+        function playSound(frequency, duration) {
+            if (!window.AudioContext) return;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'square'; // 8-bit square wave
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+        
+        function updateDisplay() {
+            // Update stats bars
+            document.getElementById('healthBar').style.width = pet.health + '%';
+            document.getElementById('hungerBar').style.width = pet.hunger + '%';
+            document.getElementById('happyBar').style.width = pet.happiness + '%';
+            document.getElementById('energyBar').style.width = pet.energy + '%';
+            
+            // Update pet sprite based on mood
+            let mood = 'happy';
+            if (pet.health < 30) mood = 'sick';
+            else if (pet.happiness < 30 || pet.hunger > 70) mood = 'sad';
+            
+            const sprite = petSprites[pet.stage][mood];
+            document.getElementById('petSprite').textContent = sprite;
+            
+            // Update status text
+            let status = 'FEELING GREAT!';
+            if (mood === 'sick') status = 'NOT FEELING WELL';
+            else if (mood === 'sad') status = 'FEELING DOWN...';
+            
+            document.getElementById('petStatus').textContent = status;
+            
+            // Update achievements
+            achievements.forEach((achievement, index) => {
+                const element = document.getElementById(`achievement${index + 1}`);
+                if (achievement.unlocked) {
+                    element.classList.add('unlocked');
+                }
+            });
+        }
+        
+        function checkAchievements() {
+            // First Feed
+            if (!achievements[0].unlocked && pet.interactions >= 1) {
+                achievements[0].unlocked = true;
+                playSound(800, 0.3);
+            }
+            
+            // Happy Pet
+            if (!achievements[1].unlocked && pet.happiness >= 80) {
+                achievements[1].unlocked = true;
+                playSound(900, 0.3);
+            }
+            
+            // Social (5 messages for demo)
+            if (!achievements[4].unlocked && pet.messages.length >= 3) {
+                achievements[4].unlocked = true;
+                playSound(1000, 0.3);
+            }
+        }
+        
+        function feedPet() {
+            pet.hunger = Math.max(0, pet.hunger - 30);
+            pet.health = Math.min(100, pet.health + 10);
+            pet.happiness = Math.min(100, pet.happiness + 5);
+            pet.interactions++;
+            
+            playSound(440, 0.2); // A4 note
+            checkAchievements();
+            updateDisplay();
+        }
+        
+        function playWithPet() {
+            pet.happiness = Math.min(100, pet.happiness + 25);
+            pet.energy = Math.max(0, pet.energy - 10);
+            pet.interactions++;
+            
+            playSound(660, 0.15); // E5 note
+            checkAchievements();
+            updateDisplay();
+        }
+        
+        function cleanPet() {
+            pet.health = Math.min(100, pet.health + 15);
+            pet.happiness = Math.min(100, pet.happiness + 10);
+            pet.interactions++;
+            
+            playSound(880, 0.1); // A5 note
+            checkAchievements();
+            updateDisplay();
+        }
+        
+        function sleepPet() {
+            pet.energy = Math.min(100, pet.energy + 50);
+            pet.interactions++;
+            
+            playSound(220, 0.5); // A3 note
+            checkAchievements();
+            updateDisplay();
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                pet.messages.push(message);
+                input.value = '';
+                
+                playSound(800, 0.2);
+                checkAchievements();
+                updateDisplay();
+                
+                // Show confirmation
+                alert('MESSAGE TRANSMITTED TO PARTNER!');
+            }
+        }
+        
+        // Simulate stat decay over time
+        setInterval(() => {
+            pet.hunger = Math.min(100, pet.hunger + 1);
+            pet.happiness = Math.max(0, pet.happiness - 0.5);
+            pet.energy = Math.max(0, pet.energy - 0.3);
+            
+            if (pet.hunger > 80 || pet.happiness < 20) {
+                pet.health = Math.max(0, pet.health - 0.5);
+            }
+            
+            updateDisplay();
+        }, 5000); // Update every 5 seconds for demo
+        
+        // Initialize display
+        updateDisplay();
+        
+        // Add keyboard controls for retro feel
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case '1': feedPet(); break;
+                case '2': playWithPet(); break;
+                case '3': cleanPet(); break;
+                case '4': sleepPet(); break;
+                case 'Enter': sendMessage(); break;
+            }
+        });
+    </script>
+</body>
+</html> 
