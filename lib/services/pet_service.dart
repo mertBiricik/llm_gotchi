@@ -9,11 +9,33 @@ import '../models/memory_game.dart';
 import 'sound_service.dart';
 
 class PetService extends ChangeNotifier {
-  Pet _pet = Pet();
+  Pet _pet = Pet.create();
   List<Achievement> _achievements = [];
   MemoryGame _memoryGame = MemoryGame();
   Timer? _updateTimer;
   final SoundService _soundService = SoundService();
+
+  // Business logic constants
+  static const Duration updateInterval = Duration(minutes: 1);
+  static const Duration actionCooldown = Duration(minutes: 10);
+  static const Duration sleepDuration = Duration(hours: 8);
+  static const double statsDecayRate = 5.0; // per hour
+  static const double happinessDecayRate = 3.0; // per hour
+  static const double energyDecayRate = 2.0; // per hour
+  static const double healthDecayRate = 2.0; // per hour
+  static const int feedHungerReduction = 30;
+  static const int feedHealthIncrease = 10;
+  static const int feedHappinessIncrease = 5;
+  static const int playHappinessIncrease = 25;
+  static const int playEnergyDecrease = 10;
+  static const int playfulIncrease = 5;
+  static const int affectionIncrease = 3;
+  static const int cleanHealthIncrease = 15;
+  static const int cleanHappinessIncrease = 10;
+  static const int sleepEnergyIncrease = 50;
+  static const int gameSmartIncrease = 10;
+  static const int gameHappinessIncrease = 15;
+  static const int messageAffectionIncrease = 2;
 
   Pet get pet => _pet;
   List<Achievement> get achievements => _achievements;
@@ -34,17 +56,23 @@ class PetService extends ChangeNotifier {
   }
 
   void _startUpdateTimer() {
-    _updateTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
-      _updateStats();
-      _updateAge();
-      _checkAchievements();
-      notifyListeners();
+    _updateTimer?.cancel(); // Ensure no duplicate timers
+    _updateTimer = Timer.periodic(updateInterval, (timer) {
+      try {
+        _updateStats();
+        _updateAge();
+        _checkAchievements();
+        notifyListeners();
+      } catch (e) {
+        debugPrint('Error in update timer: $e');
+      }
     });
   }
 
   @override
   void dispose() {
     _updateTimer?.cancel();
+    _soundService.dispose();
     super.dispose();
   }
 
@@ -54,33 +82,50 @@ class PetService extends ChangeNotifier {
       final petData = prefs.getString(_storageKey);
       final achievementData = prefs.getString(_achievementsKey);
 
-      if (petData != null) {
+      if (petData != null && petData.isNotEmpty) {
         final Map<String, dynamic> json = jsonDecode(petData);
         _pet = Pet.fromJson(json);
         _updateAge();
         _updateStats();
       }
 
-      if (achievementData != null) {
+      if (achievementData != null && achievementData.isNotEmpty) {
         final List<dynamic> achievementList = jsonDecode(achievementData);
         _loadAchievements(achievementList);
       }
 
       notifyListeners();
     } catch (e) {
-      print('Error loading pet: $e');
+      debugPrint('Error loading pet: $e');
+      // Reset to default pet if loading fails
+      _pet = Pet.create();
+      _achievements = Achievement.getDefaultAchievements();
+      notifyListeners();
     }
   }
 
   void _loadAchievements(List<dynamic> savedAchievements) {
-    for (var savedAchievement in savedAchievements) {
-      final id = savedAchievement['id'];
-      final unlocked = savedAchievement['unlocked'] ?? false;
+    try {
+      final List<Achievement> updatedAchievements = [];
       
-      final achievementIndex = _achievements.indexWhere((a) => a.id == id);
-      if (achievementIndex != -1) {
-        _achievements[achievementIndex].unlocked = unlocked;
+      for (var defaultAchievement in _achievements) {
+        // Find saved state for this achievement
+        final savedData = savedAchievements
+            .cast<Map<String, dynamic>>()
+            .where((saved) => saved['id'] == defaultAchievement.id)
+            .firstOrNull;
+        
+        if (savedData != null) {
+          final loadedAchievement = Achievement.fromJsonWithDefaults(savedData);
+          updatedAchievements.add(loadedAchievement ?? defaultAchievement);
+        } else {
+          updatedAchievements.add(defaultAchievement);
+        }
       }
+      
+      _achievements = updatedAchievements;
+    } catch (e) {
+      debugPrint('Error loading achievements: $e');
     }
   }
 
@@ -92,22 +137,27 @@ class PetService extends ChangeNotifier {
       final achievementData = _achievements.map((a) => a.toJson()).toList();
       await prefs.setString(_achievementsKey, jsonEncode(achievementData));
     } catch (e) {
-      print('Error saving pet: $e');
+      debugPrint('Error saving pet: $e');
     }
   }
 
   void _updateAge() {
     final now = DateTime.now();
     final timeDiff = now.difference(_pet.birthTime);
-    _pet.age = timeDiff.inDays;
+    final newAge = timeDiff.inDays;
 
-    // Update stage based on age
-    if (_pet.age >= 7) {
-      _pet.stage = PetStage.adult;
-    } else if (_pet.age >= 3) {
-      _pet.stage = PetStage.child;
-    } else if (_pet.age >= 1) {
-      _pet.stage = PetStage.baby;
+    if (newAge != _pet.age) {
+      // Update stage based on age
+      PetStage newStage = _pet.stage;
+      if (newAge >= 7) {
+        newStage = PetStage.adult;
+      } else if (newAge >= 3) {
+        newStage = PetStage.child;
+      } else if (newAge >= 1) {
+        newStage = PetStage.baby;
+      }
+
+      _pet = _pet.copyWith(age: newAge, stage: newStage);
     }
   }
 
@@ -116,29 +166,44 @@ class PetService extends ChangeNotifier {
     final timeDiff = now.difference(_pet.lastUpdate);
     final hoursPassed = timeDiff.inMinutes / 60.0;
 
-    if (hoursPassed > 0.1) {
-      // Decrease stats over time
-      _pet.hunger = min(100, _pet.hunger + (hoursPassed * 5).round());
-      _pet.happiness = max(0, _pet.happiness - (hoursPassed * 3).round());
-      _pet.energy = max(0, _pet.energy - (hoursPassed * 2).round());
+    if (hoursPassed > 0.1 && !_pet.isDead) {
+      // Calculate stat changes
+      final hungerIncrease = (hoursPassed * statsDecayRate).round();
+      final happinessDecrease = (hoursPassed * happinessDecayRate).round();
+      final energyDecrease = (hoursPassed * energyDecayRate).round();
+
+      final newHunger = min(Pet.maxStat, _pet.hunger + hungerIncrease);
+      final newHappiness = max(Pet.minStat, _pet.happiness - happinessDecrease);
+      final newEnergy = max(Pet.minStat, _pet.energy - energyDecrease);
 
       // Health decreases if other stats are poor
-      if (_pet.hunger > 80 || _pet.happiness < 20 || _pet.energy < 20) {
-        _pet.health = max(0, _pet.health - (hoursPassed * 2).round());
+      int healthDecrease = 0;
+      if (newHunger > 80 || newHappiness < 20 || newEnergy < 20) {
+        healthDecrease = (hoursPassed * healthDecayRate).round();
       }
+      final newHealth = max(Pet.minStat, _pet.health - healthDecrease);
 
-      // End sleep after 8 hours
-      if (_pet.isSleeping && now.difference(_pet.lastSleep).inHours >= 8) {
-        _pet.isSleeping = false;
-        _pet.energy = 100;
+      // End sleep after sleep duration
+      bool newIsSleeping = _pet.isSleeping;
+      int adjustedEnergy = newEnergy;
+      if (_pet.isSleeping && now.difference(_pet.lastSleep) >= sleepDuration) {
+        newIsSleeping = false;
+        adjustedEnergy = Pet.maxStat;
       }
 
       // Check if pet dies
-      if (_pet.health <= 0) {
-        _pet.isDead = true;
-      }
+      final newIsDead = newHealth <= 0;
 
-      _pet.lastUpdate = now;
+      _pet = _pet.copyWith(
+        hunger: newHunger,
+        happiness: newHappiness,
+        energy: adjustedEnergy,
+        health: newHealth,
+        isSleeping: newIsSleeping,
+        isDead: newIsDead,
+        lastUpdate: now,
+      );
+
       _savePet();
     }
   }
@@ -148,17 +213,16 @@ class PetService extends ChangeNotifier {
     if (_pet.isSleeping && action != 'wake') return false;
     
     final now = DateTime.now();
-    const cooldownMinutes = 10;
     
     switch (action) {
       case 'feed':
-        return now.difference(_pet.lastFeed).inMinutes >= cooldownMinutes;
+        return now.difference(_pet.lastFeed) >= actionCooldown;
       case 'play':
-        return now.difference(_pet.lastPlay).inMinutes >= cooldownMinutes;
+        return now.difference(_pet.lastPlay) >= actionCooldown;
       case 'clean':
-        return now.difference(_pet.lastClean).inMinutes >= cooldownMinutes;
+        return now.difference(_pet.lastClean) >= actionCooldown;
       case 'sleep':
-        return now.difference(_pet.lastSleep).inMinutes >= cooldownMinutes && !_pet.isSleeping;
+        return now.difference(_pet.lastSleep) >= actionCooldown && !_pet.isSleeping;
       default:
         return true;
     }
@@ -168,21 +232,20 @@ class PetService extends ChangeNotifier {
     if (_pet.isDead || canPerformAction(action)) return '';
     
     final now = DateTime.now();
-    const cooldownMinutes = 10;
     int remainingMinutes = 0;
     
     switch (action) {
       case 'feed':
-        remainingMinutes = cooldownMinutes - now.difference(_pet.lastFeed).inMinutes;
+        remainingMinutes = actionCooldown.inMinutes - now.difference(_pet.lastFeed).inMinutes;
         break;
       case 'play':
-        remainingMinutes = cooldownMinutes - now.difference(_pet.lastPlay).inMinutes;
+        remainingMinutes = actionCooldown.inMinutes - now.difference(_pet.lastPlay).inMinutes;
         break;
       case 'clean':
-        remainingMinutes = cooldownMinutes - now.difference(_pet.lastClean).inMinutes;
+        remainingMinutes = actionCooldown.inMinutes - now.difference(_pet.lastClean).inMinutes;
         break;
       case 'sleep':
-        remainingMinutes = cooldownMinutes - now.difference(_pet.lastSleep).inMinutes;
+        remainingMinutes = actionCooldown.inMinutes - now.difference(_pet.lastSleep).inMinutes;
         break;
     }
     
@@ -192,11 +255,14 @@ class PetService extends ChangeNotifier {
   void feedPet() {
     if (!canPerformAction('feed')) return;
 
-    _pet.hunger = max(0, _pet.hunger - 30);
-    _pet.health = min(100, _pet.health + 10);
-    _pet.happiness = min(100, _pet.happiness + 5);
-    _pet.lastFeed = DateTime.now();
-    _pet.totalInteractions++;
+    final now = DateTime.now();
+    _pet = _pet.copyWith(
+      hunger: max(Pet.minStat, _pet.hunger - feedHungerReduction),
+      health: min(Pet.maxStat, _pet.health + feedHealthIncrease),
+      happiness: min(Pet.maxStat, _pet.happiness + feedHappinessIncrease),
+      lastFeed: now,
+      totalInteractions: _pet.totalInteractions + 1,
+    );
 
     _soundService.playFeedSound();
     _checkAchievements();
@@ -207,12 +273,15 @@ class PetService extends ChangeNotifier {
   void playWithPet() {
     if (!canPerformAction('play')) return;
 
-    _pet.happiness = min(100, _pet.happiness + 25);
-    _pet.energy = max(0, _pet.energy - 10);
-    _pet.playful = min(100, _pet.playful + 5);
-    _pet.affection = min(100, _pet.affection + 3);
-    _pet.lastPlay = DateTime.now();
-    _pet.totalInteractions++;
+    final now = DateTime.now();
+    _pet = _pet.copyWith(
+      happiness: min(Pet.maxStat, _pet.happiness + playHappinessIncrease),
+      energy: max(Pet.minStat, _pet.energy - playEnergyDecrease),
+      playful: min(Pet.maxStat, _pet.playful + playfulIncrease),
+      affection: min(Pet.maxStat, _pet.affection + affectionIncrease),
+      lastPlay: now,
+      totalInteractions: _pet.totalInteractions + 1,
+    );
 
     _soundService.playPlaySound();
     _checkAchievements();
@@ -223,10 +292,13 @@ class PetService extends ChangeNotifier {
   void cleanPet() {
     if (!canPerformAction('clean')) return;
 
-    _pet.health = min(100, _pet.health + 15);
-    _pet.happiness = min(100, _pet.happiness + 10);
-    _pet.lastClean = DateTime.now();
-    _pet.totalInteractions++;
+    final now = DateTime.now();
+    _pet = _pet.copyWith(
+      health: min(Pet.maxStat, _pet.health + cleanHealthIncrease),
+      happiness: min(Pet.maxStat, _pet.happiness + cleanHappinessIncrease),
+      lastClean: now,
+      totalInteractions: _pet.totalInteractions + 1,
+    );
 
     _soundService.playCleanSound();
     _checkAchievements();
@@ -237,9 +309,12 @@ class PetService extends ChangeNotifier {
   void putPetToSleep() {
     if (!canPerformAction('sleep')) return;
 
-    _pet.isSleeping = true;
-    _pet.lastSleep = DateTime.now();
-    _pet.totalInteractions++;
+    final now = DateTime.now();
+    _pet = _pet.copyWith(
+      isSleeping: true,
+      lastSleep: now,
+      totalInteractions: _pet.totalInteractions + 1,
+    );
 
     _soundService.playSleepSound();
     _checkAchievements();
@@ -250,21 +325,23 @@ class PetService extends ChangeNotifier {
   void wakePet() {
     if (!_pet.isSleeping) return;
 
-    _pet.isSleeping = false;
-    _pet.energy = min(100, _pet.energy + 50);
+    _pet = _pet.copyWith(
+      isSleeping: false,
+      energy: min(Pet.maxStat, _pet.energy + sleepEnergyIncrease),
+    );
     
     _savePet();
     notifyListeners();
   }
 
   void startMemoryGame() {
-    _memoryGame.initializeGame();
-    _pet.gamesPlayed++;
+    _memoryGame = _memoryGame.initializeGame();
+    _pet = _pet.copyWith(gamesPlayed: _pet.gamesPlayed + 1);
     notifyListeners();
   }
 
   void onMemoryCardTapped(int index) {
-    _memoryGame.flipCard(index);
+    _memoryGame = _memoryGame.flipCard(index);
     
     if (_memoryGame.flippedCardIndices.length == 2) {
       // Delay to show cards before hiding non-matches
@@ -274,7 +351,7 @@ class PetService extends ChangeNotifier {
           final card2 = _memoryGame.cards[_memoryGame.flippedCardIndices[1]];
           
           if (card1.symbol != card2.symbol) {
-            _memoryGame.hideNonMatches();
+            _memoryGame = _memoryGame.hideNonMatches();
             notifyListeners();
           }
         }
@@ -282,9 +359,11 @@ class PetService extends ChangeNotifier {
     }
 
     if (_memoryGame.gameWon) {
-      _pet.gamesWon++;
-      _pet.smart = min(100, _pet.smart + 10);
-      _pet.happiness = min(100, _pet.happiness + 15);
+      _pet = _pet.copyWith(
+        gamesWon: _pet.gamesWon + 1,
+        smart: min(Pet.maxStat, _pet.smart + gameSmartIncrease),
+        happiness: min(Pet.maxStat, _pet.happiness + gameHappinessIncrease),
+      );
       _soundService.playAchievementSound();
       _checkAchievements();
       _savePet();
@@ -302,8 +381,11 @@ class PetService extends ChangeNotifier {
       sender: 'You',
     );
 
-    _pet.messages.add(message);
-    _pet.affection = min(100, _pet.affection + 2);
+    final updatedMessages = List<PetMessage>.from(_pet.messages)..add(message);
+    _pet = _pet.copyWith(
+      messages: updatedMessages,
+      affection: min(Pet.maxStat, _pet.affection + messageAffectionIncrease),
+    );
 
     _soundService.playMessageSound();
     _checkAchievements();
@@ -312,56 +394,71 @@ class PetService extends ChangeNotifier {
   }
 
   void _checkAchievements() {
-    for (var achievement in _achievements) {
+    bool hasNewAchievement = false;
+    for (int i = 0; i < _achievements.length; i++) {
+      final achievement = _achievements[i];
       if (!achievement.unlocked && achievement.condition(_pet)) {
-        achievement.unlocked = true;
-        _soundService.playAchievementSound();
-        // Achievement unlocked notification can be handled in UI
+        _achievements[i] = achievement.copyWith(unlocked: true);
+        hasNewAchievement = true;
       }
+    }
+    
+    if (hasNewAchievement) {
+      _soundService.playAchievementSound();
     }
   }
 
   List<PetMessage> getRecentMessages() {
-    return _pet.messages.length > 10 
-        ? _pet.messages.sublist(_pet.messages.length - 10)
+    const maxMessages = 10;
+    return _pet.messages.length > maxMessages 
+        ? _pet.messages.sublist(_pet.messages.length - maxMessages)
         : _pet.messages;
   }
 
   String exportPetData() {
-    final exportData = _pet.toJson();
-    exportData['exportTime'] = DateTime.now().millisecondsSinceEpoch;
-    return base64Encode(utf8.encode(jsonEncode(exportData)));
+    try {
+      final exportData = _pet.toJson();
+      exportData['exportTime'] = DateTime.now().millisecondsSinceEpoch;
+      return base64Encode(utf8.encode(jsonEncode(exportData)));
+    } catch (e) {
+      debugPrint('Error exporting pet data: $e');
+      return '';
+    }
   }
 
   bool importPetData(String encodedData) {
     try {
+      if (encodedData.trim().isEmpty) return false;
+      
       final decodedData = utf8.decode(base64Decode(encodedData));
       final Map<String, dynamic> importData = jsonDecode(decodedData);
       
       // Merge imported data with current pet
       final importedPet = Pet.fromJson(importData);
       
-      // Keep the more recent data for certain fields
-      _pet.name = importedPet.name;
-      _pet.health = max(_pet.health, importedPet.health);
-      _pet.happiness = max(_pet.happiness, importedPet.happiness);
-      _pet.energy = max(_pet.energy, importedPet.energy);
-      _pet.hunger = min(_pet.hunger, importedPet.hunger);
-      
-      // Merge messages
+      // Merge messages - avoid duplicates
+      final currentMessages = List<PetMessage>.from(_pet.messages);
       for (var message in importedPet.messages) {
-        if (!_pet.messages.any((m) => 
+        if (!currentMessages.any((m) => 
             m.text == message.text && 
             m.timestamp == message.timestamp && 
             m.sender == message.sender)) {
-          _pet.messages.add(message);
+          currentMessages.add(message);
         }
       }
       
-      // Update stats
-      _pet.gamesPlayed = max(_pet.gamesPlayed, importedPet.gamesPlayed);
-      _pet.gamesWon = max(_pet.gamesWon, importedPet.gamesWon);
-      _pet.totalInteractions = max(_pet.totalInteractions, importedPet.totalInteractions);
+      // Keep the better stats
+      _pet = _pet.copyWith(
+        name: importedPet.name,
+        health: max(_pet.health, importedPet.health),
+        happiness: max(_pet.happiness, importedPet.happiness),
+        energy: max(_pet.energy, importedPet.energy),
+        hunger: min(_pet.hunger, importedPet.hunger),
+        messages: currentMessages,
+        gamesPlayed: max(_pet.gamesPlayed, importedPet.gamesPlayed),
+        gamesWon: max(_pet.gamesWon, importedPet.gamesWon),
+        totalInteractions: max(_pet.totalInteractions, importedPet.totalInteractions),
+      );
       
       _updateAge();
       _updateStats();
@@ -371,13 +468,13 @@ class PetService extends ChangeNotifier {
       
       return true;
     } catch (e) {
-      print('Error importing pet data: $e');
+      debugPrint('Error importing pet data: $e');
       return false;
     }
   }
 
   void resetPet() {
-    _pet = Pet();
+    _pet = Pet.create();
     _achievements = Achievement.getDefaultAchievements();
     _savePet();
     notifyListeners();

@@ -1,25 +1,34 @@
 # Sound Assets
 
-This directory should contain sound files for the LDR Gotchi app.
+This directory contains sound files for the LDR Gotchi app.
 
-## Required Files
+## Expected Sound Files
 
-You can add these sound files to enhance the app experience:
+The app expects the following sound files (all in MP3 format):
 
-- `beep.mp3` - General sound effect (used for all actions if no specific sounds are available)
-- `feed.mp3` - Feeding sound
-- `play.mp3` - Playing sound  
-- `clean.mp3` - Cleaning sound
-- `sleep.mp3` - Sleep sound
-- `achievement.mp3` - Achievement unlock sound
-- `message.mp3` - Message notification sound
+- `feed.mp3` - Sound played when feeding the pet
+- `play.mp3` - Sound played when playing with the pet  
+- `clean.mp3` - Sound played when cleaning the pet
+- `sleep.mp3` - Sound played when putting pet to sleep
+- `achievement.mp3` - Sound played when unlocking achievements
+- `message.mp3` - Sound played when sending messages
 
-## Format
+## Fallback System
 
-- Preferred format: MP3
-- Keep files small (< 1MB each)
-- Short duration (1-3 seconds)
+If sound files are not present, the app will gracefully fallback to:
+1. System sounds (click/tap feedback)
+2. Silent operation if system sounds are unavailable
 
-## Notes
+## Adding Sound Files
 
-If sound files are not present, the app will gracefully handle their absence and continue to function without audio effects. 
+To add custom sounds:
+1. Place MP3 files in this directory with the exact names listed above
+2. Ensure the pubspec.yaml file includes this directory in assets
+3. Rebuild the app to include the new assets
+
+## File Requirements
+
+- Format: MP3
+- Duration: 0.5-2 seconds recommended
+- Size: Keep under 100KB per file for optimal performance
+- Quality: 44.1kHz, 128kbps recommended 

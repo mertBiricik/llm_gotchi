@@ -5,10 +5,10 @@ class Achievement {
   final String name;
   final String description;
   final String icon;
-  bool unlocked;
+  final bool unlocked;
   final bool Function(Pet pet) condition;
 
-  Achievement({
+  const Achievement({
     required this.id,
     required this.name,
     required this.description,
@@ -17,6 +17,24 @@ class Achievement {
     required this.condition,
   });
 
+  Achievement copyWith({
+    String? id,
+    String? name,
+    String? description,
+    String? icon,
+    bool? unlocked,
+    bool Function(Pet pet)? condition,
+  }) {
+    return Achievement(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      icon: icon ?? this.icon,
+      unlocked: unlocked ?? this.unlocked,
+      condition: condition ?? this.condition,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -24,63 +42,93 @@ class Achievement {
     };
   }
 
-  factory Achievement.fromJson(Map<String, dynamic> json) {
-    // Create achievement with default condition, will be updated in service
-    final achievement = Achievement(
-      id: json['id'],
-      name: '',
-      description: '',
-      icon: '',
-      unlocked: json['unlocked'] ?? false,
-      condition: (pet) => false,
-    );
-    return achievement;
+  static Achievement? fromJsonWithDefaults(Map<String, dynamic> json) {
+    try {
+      final id = json['id'] as String?;
+      final unlocked = json['unlocked'] as bool? ?? false;
+      
+      if (id == null) return null;
+      
+      // Find the default achievement with this ID
+      final defaultAchievements = getDefaultAchievements();
+      final defaultAchievement = defaultAchievements
+          .where((a) => a.id == id)
+          .firstOrNull;
+      
+      if (defaultAchievement == null) return null;
+      
+      return defaultAchievement.copyWith(unlocked: unlocked);
+    } catch (e) {
+      return null;
+    }
   }
 
   static List<Achievement> getDefaultAchievements() {
     return [
-      Achievement(
+      const Achievement(
         id: 'firstFeed',
         name: 'First Meal',
         description: 'Feed your pet for the first time',
         icon: '🍼',
-        condition: (pet) => pet.totalInteractions >= 1,
+        condition: _firstFeedCondition,
       ),
-      Achievement(
+      const Achievement(
         id: 'happyPet',
         name: 'Happy Pet',
         description: 'Keep happiness above 80%',
         icon: '😊',
-        condition: (pet) => pet.happiness >= 80,
+        condition: _happyPetCondition,
       ),
-      Achievement(
+      const Achievement(
         id: 'weekOld',
         name: 'One Week Old',
         description: 'Your pet survived a week',
         icon: '📅',
-        condition: (pet) => pet.age >= 7,
+        condition: _weekOldCondition,
       ),
-      Achievement(
+      const Achievement(
         id: 'gameWinner',
         name: 'Brain Games',
         description: 'Win 3 memory games',
         icon: '🧠',
-        condition: (pet) => pet.gamesWon >= 3,
+        condition: _gameWinnerCondition,
       ),
-      Achievement(
+      const Achievement(
         id: 'socialButterfly',
         name: 'Social Butterfly',
         description: 'Send 10 messages',
         icon: '💌',
-        condition: (pet) => pet.messages.length >= 10,
+        condition: _socialButterflyCondition,
       ),
-      Achievement(
+      const Achievement(
         id: 'adulthood',
         name: 'All Grown Up',
         description: 'Pet reaches adulthood',
         icon: '🎓',
-        condition: (pet) => pet.stage == PetStage.adult,
+        condition: _adulthoodCondition,
       ),
     ];
   }
+
+  // Static condition functions
+  static bool _firstFeedCondition(Pet pet) => pet.totalInteractions >= 1;
+  static bool _happyPetCondition(Pet pet) => pet.happiness >= 80;
+  static bool _weekOldCondition(Pet pet) => pet.age >= 7;
+  static bool _gameWinnerCondition(Pet pet) => pet.gamesWon >= 3;
+  static bool _socialButterflyCondition(Pet pet) => pet.messages.length >= 10;
+  static bool _adulthoodCondition(Pet pet) => pet.stage == PetStage.adult;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Achievement &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          description == other.description &&
+          icon == other.icon &&
+          unlocked == other.unlocked;
+
+  @override
+  int get hashCode => Object.hash(id, name, description, icon, unlocked);
 } 
